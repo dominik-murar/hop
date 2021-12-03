@@ -7,11 +7,8 @@ import random
 def objective(edges, vertices_colors):
 	cost = 0
 	for edge in edges:
-		# print('Vrcholy', edge[0], edge[1])
-		# print('Farby vrcholov', vertices_colors[edge[0]], vertices_colors[edge[1]])
 		if vertices_colors[edge[0]] == vertices_colors[edge[1]]:
 			cost += 1
-			# print(">> shit, equal. COST:", cost)
 	return cost
 
 # simulated annealing algorithm
@@ -30,11 +27,9 @@ def simulated_annealing_for_graph_coloring(objective, edges, n_colors, n_iterati
 	for i in range(n_iterations):
 		# take a step
 		candidate_vertices_colors = curr_vertices_colors.copy()
-		# candidate_vertices_colors[np.random.randint(1, len(candidate_vertices_colors))] = np.random.randint(1, n_colors+1)
 		rand_i = np.random.randint(1, len(candidate_vertices_colors))
 		rand_list = list(range(1, n_colors+1))
 		candidate_vertices_colors[rand_i] = random.choice([ele for ele in rand_list if ele != curr_vertices_colors[rand_i]])
-		# print('Changed solution:\n', candidate_vertices_colors)
 		# evaluate candidate point
 		candidate_eval = objective(edges, candidate_vertices_colors)
 		# check for new best solution
@@ -52,8 +47,6 @@ def simulated_annealing_for_graph_coloring(objective, edges, n_colors, n_iterati
 		if diff < 0 or np.random.rand() < metropolis:
 			# store the new current point
 			curr_vertices_colors, curr_eval = candidate_vertices_colors, candidate_eval
-		# print('Curr VS Best solution:\n', curr_vertices_colors, '\n', best_vertices_colors)
-		# print('Curr VS Best cost:\n', curr_eval, '\n', best_eval)
 	return [best_vertices_colors, best_eval]
 
 
@@ -68,11 +61,11 @@ np.random.seed(4)
 bounds = np.asarray([[-5.0, 5.0]])
 # define the total iterations
 n_iterations = 1000
-# define the maximum step size
-# step_size = 0.1
+# define number of max used colors
 n_colors = 6
 # initial temperature
 temp = 10
+
 # perform the simulated annealing search
 best, score = simulated_annealing_for_graph_coloring(objective, edges, n_colors, n_iterations, temp)
 with open(txt_out, 'w') as outfile:
@@ -80,7 +73,7 @@ with open(txt_out, 'w') as outfile:
 	for key, value in best.items():
 		outcome += "%s %s\n" % (key, value)
 	outfile.write(outcome)
+
 print('\n🎉 Done!')
-# print('f(%s) = %f' % (best, score))
 print('🏁 Cost:', score)
 print('🏁 Best combination:\n', best, '\n')
